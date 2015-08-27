@@ -1,3 +1,10 @@
 #!/usr/bin/env python
-import dockdev
-dockdev.dockdev.main()
+import dockdev, sys
+
+try:
+  dockdev.dockdev.main(sys.argv[1:])
+except KeyboardInterrupt as e:
+  print "Aborted"
+except Exception as e:
+  print "ERROR: %s" % str(e)
+
