@@ -30,13 +30,21 @@ def fetch_image(config, app, branch):
   print "[%s] tagging %s:%s as %s:local" % (app, repo, head, repo)
   docker_client.tag(repo + ":" + head, repo, "local", True)
   
-def build_image(config, app):
+def build_image(config, app, checkout):
   repo = config['hub'] % app
-  script_dir = os.path.expandvars(config['dir'] % app)
-  script = os.path.join(script_dir, "build-local.sh")
+  build_dir = os.path.expandvars(config['dir'] % app)
+  if not os.path.exists(build_dir):
+    if checkout:
+      git_repo = config["git"] % app
+      print "[%s] cloning git repo %s in to %s" % (app, git_repo, build_dir)
+      git.Git().clone(git_repo, build_dir)
+    else:
+      raise Exception ("%s does not exist. Either checkout or run with -c." % build_dir)
   
-  print "[%s] Building using %s..." % (app, script)
-  p = subprocess.Popen(script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd = script_dir, bufsize = 0)
+  build_script = os.path.join(build_dir, "build-local.sh")
+  
+  print "[%s] Building using %s..." % (app, build_script)
+  p = subprocess.Popen(build_script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=build_dir, bufsize=0)
   while True:
     line = p.stdout.readline()
     if line != '':
@@ -47,7 +55,7 @@ def build_image(config, app):
   if exit_code != os.EX_OK:
     raise Exception("Stopped due to error: %s" % (app, str(exit_code)))
   
-  print "[%s] $s:local build finished" % (app, repo)
+  print "[%s] %s:local build finished" % (app, repo)
 
 def main(argv):
   parser = argparse.ArgumentParser(
@@ -62,6 +70,8 @@ def main(argv):
     metavar=("BRANCH", "APP[,APP[,...]]"), help="Fetch app image for built for branch")
   parser.add_argument('-o', '--only', default=False, action='store_true',
     help="Turns off default master fetch. Only build apps explicitly specified in options.")
+  parser.add_argument('-c', '--checkout', default=False, action='store_true',
+    help="Enable automatic checkout of projects if not currently present in build dir (experimental).")
 
   args = parser.parse_args(argv)
   config = get_config()
@@ -71,7 +81,7 @@ def main(argv):
 
   for app in config['apps']:
     if app in local:
-      build_image(config, app)
+      build_image(config, app, args.checkout)
     elif app in branch:
       fetch_image(config, app, branch[app])
     elif not only:
