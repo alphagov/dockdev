@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "dockdev",
-    version = "0.0.5",
+    version = "0.0.6",
     author = "Ian Maddison",
     author_email = "ian.maddison@digital.cabinet-office.gov.uk",
     description = ("A simple development setup tool for docker containerised apps"),
