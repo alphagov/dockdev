@@ -10,7 +10,7 @@ def docker_args():
 docker_client = docker.Client(**docker_args())
 
 def get_config():
-  config_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'apps.json')
+  config_file = os.path.join(os.getcwd(), 'config.json')
   with open(config_file) as fp:
     return json.loads(fp.read())
 
