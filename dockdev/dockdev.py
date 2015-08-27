@@ -47,7 +47,7 @@ def build_image(config, app):
   if exit_code != os.EX_OK:
     raise Exception("Stopped due to error: %s" % (app, str(exit_code)))
   
-  print "[%s] $s:local build finished" % (app, local_id)
+  print "[%s] $s:local build finished" % (app, repo)
 
 def main(argv):
   parser = argparse.ArgumentParser(
