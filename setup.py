@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "dockdev",
-    version = "0.0.9",
+    version = "0.1.0",
     author = "Ian Maddison",
     author_email = "ian.maddison@digital.cabinet-office.gov.uk",
     description = ("A simple development setup tool for docker containerised apps"),
@@ -18,8 +18,8 @@ setup(
     install_requires=['docker-py', 'GitPython'],
     long_description=read('README'),
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Topic :: Utilities",
+        "Development Status :: 4 - Beta",
+        "Topic :: Software Development :: Build Tools",
         "License :: OSI Approved :: MIT License",
     ],
 )
