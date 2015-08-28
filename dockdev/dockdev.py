@@ -53,7 +53,7 @@ def build_image(config, app, checkout):
       break
   exit_code = p.wait()
   if exit_code != os.EX_OK:
-    raise Exception("Stopped due to error: %s" % (app, str(exit_code)))
+    raise Exception("Stopped due to build error: %s" % str(exit_code))
   
   print "[%s] %s:local build finished" % (app, repo)
 
