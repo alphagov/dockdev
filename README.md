@@ -22,13 +22,12 @@ Run `dockdev` in the directory your `config.json` is located. See below on how `
 
 Examples:
 * `dockdev` - fetches the *master* image from the registry for all services and tags them with `:local`.
-* `dockdev -l *service1* -c` - fetches *master* image for everything except *service1*. Checks out the code for *service1*, builds it using the `Dockerfile` via `build-local.sh`. 
-* `dockdev -l *service1*` - fetches *master* image for everything except *service1*. Builds existing checked out code for *service1* using the `Dockerfile` via `build-local.sh`. 
-* `dockdev -l *service1* -l *service2*`  - fetches *master* image for everything except *service1* and *service2*. Builds checked out code for *service1* and *service2* using the `Dockerfile` via `build-local.sh`. 
-* `dockdev -b <branch1> *service1*` - fetches *master* image for everything except *service1*. Fetches *branch1* image for *service1*.
-* `dockdev -b <branch1> *service1*,*service2*`
-* `dockdev -b <branch1> *service1* -b <branch2> *service2* -l *service3*` - A combination of branch and local builds as above. You can combine as many options as you want.
-* `dockdev -b <branch1> *service1*,*service2*` - alternative syntax for *service1* and *service2* both on *branch1*.
+* `dockdev -l service1 -c` - fetches *master* image for everything except *service1*. Checks out the code for *service1*, builds it using the `Dockerfile` via `build-local.sh`. 
+* `dockdev -l service1` - fetches *master* image for everything except *service1*. Builds existing checked out code for *service1* using the `Dockerfile` via `build-local.sh`. 
+* `dockdev -l service1 -l service2`  - fetches *master* image for everything except *service1* and *service2*. Builds checked out code for *service1* and *service2* using the `Dockerfile` via `build-local.sh`. 
+* `dockdev -b <branch1> service1` - fetches *master* image for everything except *service1*. Fetches *branch1* image for *service1*.
+* `dockdev -b <branch1> service1 -b branch2 service2 -l service3` - A combination of branch and local builds as above. You can combine as many options as you want.
+* `dockdev -b <branch1> service1,service2` - alternative syntax for *service1* and *service2* both on *branch1*.
 
 ### Dependencies
 
