@@ -13,16 +13,22 @@ You can build a `docker-compose.yml` or similar file that links together images 
 As a developer, DockDev can be used to mix clean, pre-built master or branch images with ones checked out locally that, for example, contain work on features.
 
 DockDev is available in PyPI. You can install it using pip (may need to sudo on some platforms):
+
+```
 pip install dockdev
+```
+
+Run `dockdev` in the directory your `config.json` is located. See below on how `config.json` should look (it's something you'll build once as a team and will probably be stored in your repositories ready to be checked out). Default behaviour is to fetch *master* images for everything configured in `config.json`. Specifying options to `dockdev` changes its behaviour:
 
 Examples:
-* dockdev
-* dockdev -l service1 -c
-* dockdev -l service1
-* dockdev -l service1 -l service2
-* dockdev -b <branch1> service1
-* dockdev -b <branch1> service1,service2
-* dockdev -b <branch1> service1 -b <branch2> service2 -l service3
+* `dockdev` - fetches the *master* image from the registry for all services and tags them with `:local`.
+* `dockdev -l *service1* -c` - fetches *master* image for everything except *service1*. Checks out the code for *service1*, builds it using the `Dockerfile` via `build-local.sh`. 
+* `dockdev -l *service1*` - fetches *master* image for everything except *service1*. Builds existing checked out code for *service1* using the `Dockerfile` via `build-local.sh`. 
+* `dockdev -l *service1* -l *service2*`  - fetches *master* image for everything except *service1* and *service2*. Builds checked out code for *service1* and *service2* using the `Dockerfile` via `build-local.sh`. 
+* `dockdev -b <branch1> *service1*` - fetches *master* image for everything except *service1*. Fetches *branch1* image for *service1*.
+* `dockdev -b <branch1> *service1*,*service2*`
+* `dockdev -b <branch1> *service1* -b <branch2> *service2* -l *service3*` - A combination of branch and local builds as above. You can combine as many options as you want.
+* `dockdev -b <branch1> *service1*,*service2*` - alternative syntax for *service1* and *service2* both on *branch1*.
 
 ### Dependencies
 
@@ -41,7 +47,7 @@ ADD target/packaged.jar /app/
 CMD java -jar packaged.jar 8080
 ```
 
-A `build-local.sh` also in the root that builds a docker image and tags it with the repository name but a :local tag (which is never pushed):
+A `build-local.sh` also in the root that builds a docker image and tags it with the repository name but a `:local` tag (which is never pushed):
 
 ```
 #!/bin/bash
