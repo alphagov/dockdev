@@ -95,6 +95,20 @@ All values will have environment variables interpolated to make life easier. In 
 
 ### Running Tests
 
+Create a virtual environment and install dependencies:
+
+```
+virtualenv env
+source env/bin/activate
+pip install -r requirements.txt
+```
+
+Tests themselves are run with nose:
+
+```
+nosetests
+```
+
 ## Licence
 
 [MIT License](LICENCE)
