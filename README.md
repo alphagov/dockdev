@@ -67,19 +67,19 @@ You’ll need to produce a `config.json` listing your services describing your s
 {
   "services": {
     "service1" : {
-      "git": "git@git:orgname/service1.git", 
-      "reg": "registryorg/service1", 
-      "dir": "$WORKSPACE/service1"
+      "git_repo": "git@git:orgname/service1.git", 
+      "docker_repo": "registryorg/service1", 
+      "build_dir": "$WORKSPACE/service1"
     },
     "service2" : {
-      "git": "git@git:orgname/service2.git",
-      "reg": "registryorg/service2", 
-      "dir": "$WORKSPACE/service2"
+      "git_repo": "git@git:orgname/service2.git",
+      "docker_repo": "registryorg/service2", 
+      "build_dir": "$WORKSPACE/service2"
     },
     "service3" : {
-      "git": "git@git:orgname/service2.git",
-      "reg": "registryorg/service3", 
-      "dir": "$WORKSPACE/service3"
+      "git_repo": "git@git:orgname/service2.git",
+      "docker_repo": "registryorg/service3", 
+      "build_dir": "$WORKSPACE/service3"
     }
   }
 }
@@ -87,9 +87,9 @@ You’ll need to produce a `config.json` listing your services describing your s
 
 As you might expect:
 
- * `git` is the location of the service's repo in git.
- * `reg` is the location of the service's docker registry repository.
- * `dir` is where checked out code lives.
+ * `git_repo` is the location of the service's repo in git.
+ * `docker_repo` is the location of the service's docker registry repository.
+ * `build_dir` is where checked out code lives.
 
 All values will have environment variables interpolated to make life easier. In the above example we use `$WORKSPACE` which developers will set to where they'd like the services code to live. DockDev will also do a string interpolation for `{name}` to make things potentially more formulaic.
 
