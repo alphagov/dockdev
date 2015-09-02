@@ -8,7 +8,7 @@ DockDev works by applying a `:local` tag to whatever docker build the developer 
 
 You can build a `docker-compose.yml` or similar file that links together images with these `:local` tags, or just run using some scripts.
 
-### Using the application
+### Usage
 
 As a developer, DockDev can be used to mix clean, pre-built master or branch images with ones checked out locally that, for example, contain work on features.
 
@@ -61,9 +61,39 @@ reponame/project:d670460b4b4aece5915caf5c68d12f560a9fe3e4
 
 Recommended: `docker-compose` used to set up services to run together, everything referencing images with a :local tag, linked together using docker links.
 
-You’ll need to produce a `config.json` listing your services describing your services.
+You’ll need to produce a `config.json` listing your services describing your services. It should look like the following:
 
-### Running the test suite
+```json
+{
+  "services": {
+    "service1" : {
+      "git": "git@git:orgname/service1.git", 
+      "reg": "registryorg/service1", 
+      "dir": "$WORKSPACE/service1"
+    },
+    "service2" : {
+      "git": "git@git:orgname/service2.git",
+      "reg": "registryorg/service2", 
+      "dir": "$WORKSPACE/service2"
+    },
+    "service3" : {
+      "git": "git@git:orgname/service2.git",
+      "reg": "registryorg/service3", 
+      "dir": "$WORKSPACE/service3"
+    }
+  }
+}
+```
+
+As you might expect:
+
+ * `git` is the location of the service's repo in git.
+ * `reg` is the location of the service's docker registry repository.
+ * `dir` is where checked out code lives.
+
+All values will have environment variables interpolated to make life easier. In the above example we use `$WORKSPACE` which developers will set to where they'd like the services code to live. DockDev will also do a string interpolation for `{name}` to make things potentially more formulaic.
+
+### Running Tests
 
 ## Licence
 
