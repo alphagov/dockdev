@@ -66,8 +66,11 @@ class Service(object):
     print "[{s.name}] {branch} HEAD is {head}".format(s=self, head=head, branch=branch)
     print "[{s.name}] fetching {s.docker_repo}:{head}".format(s=self, head=head)
     docker.pull(self.docker_repo, tag=head)
-    print "[{s.name}] tagging fetched image as {s.docker_repo}:local".format(s=self)
-    docker.tag(self.docker_repo + ":" + head, self.docker_repo, "local", True)
+    self.retag(head, docker)
+
+  def retag(self, tag, docker):
+    print "[{s.name}] tagging {s.docker_repo}:{tag} as {s.docker_repo}:local".format(s=self, tag=tag)
+    docker.tag(self.docker_repo + ":" + tag, self.docker_repo, "local", True)
 
 def parse_args(argv):
   parser = argparse.ArgumentParser(
@@ -78,6 +81,8 @@ def parse_args(argv):
     metavar="APP[,APP[,...]]", help="Build service image for local git checkout (inc. changes)")
   parser.add_argument('-b', '--branch', default=[], action='append', nargs=2,
     metavar=("BRANCH", "APP[,APP[,...]]"), help="Fetch service image for built for branch")
+  parser.add_argument('-r', '--retag', default=[], action='append', nargs=2,
+    metavar=("TAG", "APP[,APP[,...]]"), help="Retag existing service image with local tag")
   parser.add_argument('-o', '--only', default=False, action='store_true',
     help="Turns off default master fetch. Only build services explicitly specified in options.")
   parser.add_argument('-c', '--checkout', default=False, action='store_true',
@@ -86,13 +91,14 @@ def parse_args(argv):
   parsed_args = parser.parse_args(argv)
   local = set(itertools.chain(*[x[0].split(',') for x in parsed_args.local]))
   branch = dict(itertools.chain(*map(lambda e : [(key, e[0]) for key in e[1].split(',')], parsed_args.branch)))
+  retag = dict(itertools.chain(*map(lambda e : [(key, e[0]) for key in e[1].split(',')], parsed_args.retag)))
   
-  return (local, branch, parsed_args.checkout, parsed_args.only)
+  return (local, branch, retag, parsed_args.checkout, parsed_args.only)
 
 def main(argv):
   docker = get_docker()
   git = get_git()
-  (local, branch, auto_checkout, only) = parse_args(argv)
+  (local, branch, retag, auto_checkout, only) = parse_args(argv)
   
   print "----------------------------------------"
   for service in get_config():
@@ -100,6 +106,8 @@ def main(argv):
       service.build(git, auto_checkout)
     elif service.name in branch:
       service.fetch(branch[service.name], docker)
+    elif service.name in retag:
+      service.retag(retag[service.name], docker)
     elif not only:
       service.fetch("master", docker)
     else:
