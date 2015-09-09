@@ -11,7 +11,8 @@ def get_git():
   return git.Git()
   
 def get_config():
-  config_file = os.path.join(os.getcwd(), "config.json")
+  config_file_in_cwd = os.path.join(os.getcwd(), "config.json")
+  config_file = os.environ.get("DOCKDEV_CONFIG", config_file_in_cwd)
   with open(config_file) as fp:
     return parse_config(fp.read())
 
