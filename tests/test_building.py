@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from dockdev.dockdev import parse_config
-
 import os
 
 from nose.tools import assert_equal

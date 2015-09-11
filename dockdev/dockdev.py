@@ -54,19 +54,11 @@ class Service(object):
   def get_adhoc_dir(self):
     return BuildDirectory(self, tempfile.mkdtemp())
 
-class DockDev:
+class DockDev:  
   def __init__(self):
     config_file = os.path.join(os.getcwd(), "config.json")
     with open(config_file) as fp:
-      config_json = json.loads(fp.read())
-      
-    self.services = []
-    for name, config in config_json["services"].iteritems():
-      merged_config = config_json.get("template", {})
-      merged_config.update(config)
-      merged_config = {k: os.path.expandvars(v.format(name=name)) for k, v in merged_config.iteritems()}
-      self.services.append(Service(name, merged_config))
-    
+      self.services = parse_config(fp.read()) 
     kw = docker.utils.kwargs_from_env()
     if not kw:
       kw = {}
@@ -130,6 +122,16 @@ class DockDev:
   def retag(self, service, tag):
     print "[{s.name}] tagging {s.docker_repo}:{tag} as {s.docker_repo}:local".format(s=service, tag=tag)
     self.client.tag(service.docker_repo + ":" + tag, service.docker_repo, "local", True)
+
+def parse_config(config_data):
+  config_json = json.loads(config_data)
+  services = []
+  for name, config in config_json["services"].iteritems():
+    merged_config = config_json.get("template", {})
+    merged_config.update(config)
+    merged_config = {k: os.path.expandvars(v.format(name=name)) for k, v in merged_config.iteritems()}
+    services.append(Service(name, merged_config))
+  return services
 
 def parse_args(argv):
   parser = argparse.ArgumentParser(
