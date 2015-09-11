@@ -56,7 +56,8 @@ class Service(object):
 
 class DockDev:  
   def __init__(self):
-    config_file = os.path.join(os.getcwd(), "config.json")
+    config_file_in_cwd = os.path.join(os.getcwd(), "config.json")
+    config_file = os.environ.get("DOCKDEV_CONFIG", config_file_in_cwd)
     with open(config_file) as fp:
       self.services = parse_config(fp.read()) 
     kw = docker.utils.kwargs_from_env()
