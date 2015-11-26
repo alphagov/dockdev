@@ -92,16 +92,10 @@ class DockDev:
     adhoc_dir.run_build(log_callback)
     print "[{s.name}] {s.docker_repo}:adhoc build successful".format(s=service)
     
-  def fetch(self, service, branches, adhoc = False):
-    head = None
-    for branch in branches:
-      head = service.get_head(branch)
-      if head:
-        break
-    
+  def fetch(self, service, branch, adhoc = False):
+    head = service.get_head(branch)
     if not head:
-        raise Exception("No branches named {branches} found in {s.git_url}".format(
-          s=service, branches=string.join(branches, ",")))    
+        raise Exception("No branch named {branch} found in {s.git_url}".format(s=service, branch=branch)
     
     try:
       print "[{s.name}] {branch} HEAD is {head}".format(s=service, head=head, branch=branch)
@@ -144,29 +138,21 @@ def parse_args(argv):
     metavar=("TAG", "APP[,APP[,...]]"), help="Retag existing service image with local tag")
   parser.add_argument("-o", "--only", default=False, action="store_true",
     help="Turns off default branch fetch. Only build services explicitly specified in options.")
-  parser.add_argument("-d", "--default", default=[], action="append", nargs=1,
-    metavar="BRANCH[,BRANCH[,...]]", help="Change the default branch to be fetched to something other than master for" + 
-      "projects not specifically enumerated in -l or -b. Specify comma separated list to try each branches until one " +
-      "is found (useful for working with branches of the same name together across some but not all services).")
   parser.add_argument("-c", "--checkout", default=False, action="store_true",
     help="Enable automatic checkout of services in -l if not currently present in build dir.")
   parser.add_argument("-a", "--adhoc", default=False, action="store_true",
-    help="Attempt to checkout & build branches that would otherwise be fetched when no image is in the registry.")
+    help="Attempt to checkout & build services that would otherwise be fetched when no image is present in the registry.")
     
   parsed_args = parser.parse_args(argv)
   local = set(chain(*[x[0].split(",") for x in parsed_args.local]))
   branch = dict(chain(*map(lambda e : [(key, e[0]) for key in e[1].split(",")], parsed_args.branch)))
   retag = dict(chain(*map(lambda e : [(key, e[0]) for key in e[1].split(",")], parsed_args.retag)))
-  default = list(chain(*[x[0].split(",") for x in parsed_args.default]))
   
-  return (local, branch, retag, default, parsed_args.checkout, parsed_args.adhoc, parsed_args.only)
+  return (local, branch, retag, parsed_args.checkout, parsed_args.adhoc, parsed_args.only)
 
 def main(argv):
   dockdev = DockDev()
-  (local, branch, retag, default, checkout, adhoc, only) = parse_args(argv)
-  if len(default) == 0:
-    default = ["master"]
-  
+  (local, branch, retag, checkout, adhoc, only) = parse_args(argv)
   print "----------------------------------------"
   for service in dockdev.services:
     if service.name in local:
@@ -176,7 +162,7 @@ def main(argv):
     elif service.name in branch:
       dockdev.fetch(service, branch[service.name], adhoc)
     elif not only:
-      dockdev.fetch(service, default, adhoc)
+      dockdev.fetch(service, 'master', adhoc)
     else:
       print "[{s.name}] skipped".format(s=service)
     print "----------------------------------------"
