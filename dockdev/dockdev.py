@@ -3,6 +3,7 @@ import sys, subprocess, os, json, argparse, itertools, git, docker, docker.utils
 
 def get_docker():
   kw = docker.utils.kwargs_from_env()
+  kw["version"] = "1.20"
   if kw and 'tls' in kw:
     kw['tls'].assert_hostname = False
   return docker.Client(**kw)
