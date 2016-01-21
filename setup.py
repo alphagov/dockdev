@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "dockdev",
-    version = "0.2.0",
+    version = "0.4.0",
     author = "Ian Maddison",
     author_email = "ian.maddison@digital.cabinet-office.gov.uk",
     description = ("A simple development setup tool for docker containerised apps"),
